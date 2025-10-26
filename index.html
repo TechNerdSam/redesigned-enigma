@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estimateur de Consommation d'Eau</title>
+    
+    <!-- Importation de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Importation de la police 'Inter' (tendance 2025) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Définition de la police par défaut */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Arrière-plan futuriste subtil */
+        .gradient-bg {
+            background-color: #f0f4f8;
+            background-image: radial-gradient(circle at 1% 1%, #e6f0ff 0%, #f0f4f8 100%);
+        }
+
+        /* Effet de "verre dépoli" (Glassmorphism) pour le conteneur principal */
+        .card-glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.12);
+        }
+
+        /* Style personnalisé pour les champs de saisie */
+        .input-modern {
+            background: rgba(249, 250, 251, 0.8); /* bg-gray-50/80 */
+            border: 1px solid rgba(209, 213, 219, 0.5); /* border-gray-300/50 */
+            transition: all 0.3s ease;
+        }
+        .input-modern:focus {
+            background: rgba(255, 255, 255, 1);
+            border-color: #2563eb; /* focus:border-blue-600 */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); /* focus:ring-blue-500/20 */
+            outline: none;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen antialiased">
+
+    <!-- Conteneur principal -->
+    <div class="flex flex-col items-center justify-center min-h-screen p-4 md:p-8">
+
+        <!-- En-tête -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
+                Aqua<span class="text-blue-600">Metric</span>
+            </h1>
+            <p class="mt-2 text-lg text-gray-600">Votre estimateur de consommation d'eau nouvelle génération.</p>
+        </header>
+
+        <!-- Carte principale de l'calculateur -->
+        <main class="w-full max-w-4xl mx-auto">
+            <div class="card-glass rounded-3xl p-8 md:p-12">
+                
+                <h2 class="text-2xl font-bold text-gray-800 text-center mb-1">Calculez votre empreinte hydrique</h2>
+                <p class="text-center text-gray-600 mb-8">Entrez vos habitudes quotidiennes pour obtenir une estimation précise.</p>
+
+                <form id="waterForm" class="space-y-6">
+                    <!-- Grille pour les champs de saisie -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                        
+                        <!-- Champ: Nombre de personnes -->
+                        <div>
+                            <label for="people" class="block mb-2 text-sm font-medium text-gray-700">Personnes dans le foyer</label>
+                            <input type="number" id="people" value="1" min="1" class="input-modern rounded-lg w-full p-3 text-gray-900" required>
+                        </div>
+                        
+                        <!-- Champ: Douches par jour -->
+                        <div>
+                            <label for="showers" class="block mb-2 text-sm font-medium text-gray-700">Douches (total par jour)</label>
+                            <input type="number" id="showers" value="1" min="0" class="input-modern rounded-lg w-full p-3 text-gray-900" required>
+                        </div>
+
+                        <!-- Champ: Durée des douches -->
+                        <div>
+                            <label for="duration" class="block mb-2 text-sm font-medium text-gray-700">Durée moyenne d'une douche (minutes)</label>
+                            <input type="number" id="duration" value="8" min="0" class="input-modern rounded-lg w-full p-3 text-gray-900" required>
+                        </div>
+                        
+                        <!-- Champ: Chasses d'eau -->
+                        <div>
+                            <label for="flushes" class="block mb-2 text-sm font-medium text-gray-700">Chasses d'eau (total par jour)</label>
+                            <input type="number" id="flushes" value="4" min="0" class="input-modern rounded-lg w-full p-3 text-gray-900" required>
+                        </div>
+
+                        <!-- Champ: Cycles de lessive -->
+                        <div>
+                            <label for="laundry" class="block mb-2 text-sm font-medium text-gray-700">Cycles de lessive (par semaine)</label>
+                            <input type="number" id="laundry" value="3" min="0" class="input-modern rounded-lg w-full p-3 text-gray-900" required>
+                        </div>
+
+                        <!-- Champ: Cycles de lave-vaisselle -->
+                        <div>
+                            <label for="dishwasher" class="block mb-2 text-sm font-medium text-gray-700">Cycles de lave-vaisselle (par semaine)</label>
+                            <input type="number" id="dishwasher" value="2" min="0" class="input-modern rounded-lg w-full p-3 text-gray-900" required>
+                        </div>
+
+                        <!-- Champ: Vaisselle à la main -->
+                        <div class="md:col-span-2">
+                            <label for="handwash" class="block mb-2 text-sm font-medium text-gray-700">Lavages de vaisselle à la main (par jour)</label>
+                            <input type="number" id="handwash" value="1" min="0" class="input-modern rounded-lg w-full p-3 text-gray-900" required>
+                        </div>
+                    </div>
+
+                    <!-- Bouton de calcul -->
+                    <div class="pt-4">
+                        <button type="button" onclick="calculateWater()" class="w-full bg-blue-600 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-4 focus:ring-blue-300">
+                            Calculer ma consommation
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Section des résultats (initialement masquée) -->
+            <div id="results" class="hidden mt-10 max-w-4xl w-full mx-auto bg-white/80 rounded-3xl p-8 shadow-md border border-gray-200/50">
+                <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Votre estimation</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    
+                    <!-- Résultat quotidien -->
+                    <div class="bg-blue-50/70 p-6 rounded-2xl text-center transition-all duration-300 hover:shadow-lg">
+                        <span class="text-sm font-medium text-blue-800">Par jour</span>
+                        <p class="text-4xl font-extrabold text-blue-700 my-1">
+                            <span id="result-daily">0</span> L
+                        </p>
+                    </div>
+                    
+                    <!-- Résultat mensuel -->
+                    <div class="bg-blue-100/70 p-6 rounded-2xl text-center transition-all duration-300 hover:shadow-lg scale-100 md:scale-105 shadow-md">
+                        <span class="text-sm font-medium text-blue-900">Par mois</span>
+                        <p class="text-4xl font-extrabold text-blue-800 my-1">
+                            <span id="result-monthly">0</span> L
+                        </p>
+                    </div>
+
+                    <!-- Résultat annuel -->
+                    <div class="bg-blue-50/70 p-6 rounded-2xl text-center transition-all duration-300 hover:shadow-lg">
+                        <span class="text-sm font-medium text-blue-800">Par an</span>
+                        <p class="text-4xl font-extrabold text-blue-700 my-1">
+                            <span id="result-yearly">0</span> m³
+                        </p>
+                    </div>
+                </div>
+                 <p class="text-xs text-gray-500 text-center mt-6">
+                    * Estimation basée sur des moyennes (douche: 12L/min, chasse: 8L, lessive: 60L, lave-vaisselle: 12L, vaisselle main: 20L, basique: 10L/pers).
+                </p>
+            </div>
+        </main>
+
+        <!-- Pied de page -->
+        <footer class="text-center mt-12 pb-8">
+            <p class="text-sm text-gray-500">&copy; 2025 AquaMetric. Tous droits réservés.</p>
+        </footer>
+    </div>
+
+    <!-- Script de calcul -->
+    <script>
+        function calculateWater() {
+            // Constantes de consommation (en litres)
+            const LITER_PER_SHOWER_MIN = 12;
+            const LITER_PER_FLUSH = 8;
+            const LITER_PER_LAUNDRY = 60;
+            const LITER_PER_DISHWASHER = 12;
+            const LITER_PER_HANDWASH = 20;
+            const LITER_PER_PERSON_BASIC = 10; // Boisson, cuisine, hygiène de base
+
+            // Récupération des valeurs des champs
+            const people = parseFloat(document.getElementById('people').value) || 0;
+            const showers = parseFloat(document.getElementById('showers').value) || 0;
+            const duration = parseFloat(document.getElementById('duration').value) || 0;
+            const flushes = parseFloat(document.getElementById('flushes').value) || 0;
+            const laundry = parseFloat(document.getElementById('laundry').value) || 0;
+            const dishwasher = parseFloat(document.getElementById('dishwasher').value) || 0;
+            const handwash = parseFloat(document.getElementById('handwash').value) || 0;
+
+            // Calcul
+            let totalDaily = 0;
+            totalDaily += (people * LITER_PER_PERSON_BASIC);
+            totalDaily += (showers * duration * LITER_PER_SHOWER_MIN);
+            totalDaily += (flushes * LITER_PER_FLUSH);
+            totalDaily += ((laundry / 7) * LITER_PER_LAUNDRY);       // Conversion semaine -> jour
+            totalDaily += ((dishwasher / 7) * LITER_PER_DISHWASHER); // Conversion semaine -> jour
+            totalDaily += (handwash * LITER_PER_HANDWASH);
+
+            const totalMonthly = totalDaily * 30.44; // Jours moyens par mois
+            const totalYearly = totalDaily * 365.25; // Pour les années bissextiles
+
+            // Affichage des résultats
+            document.getElementById('result-daily').innerText = totalDaily.toFixed(1);
+            document.getElementById('result-monthly').innerText = totalMonthly.toLocaleString('fr-FR', { maximumFractionDigits: 0 });
+            
+            // Conversion en mètres cubes (m³) pour l'année
+            document.getElementById('result-yearly').innerText = (totalYearly / 1000).toFixed(2);
+
+            // Afficher la section des résultats
+            const resultsSection = document.getElementById('results');
+            resultsSection.classList.remove('hidden');
+            
+            // Défilement fluide vers les résultats
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    </script>
+
+</body>
+</html>
